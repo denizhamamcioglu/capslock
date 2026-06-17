@@ -9,11 +9,12 @@ Desktop & Mobile
 7. field validation - in range zip - valid email, single name (full name validation)
 8. field validation - in range zip - valid email, valid name, empty phone
 9. field validation - in range zip - valid email, valid name, short phone
-10. carousel image changes.
-11. review section stars - titles, content, images.
-12. review section show more - show less button
-13. video playback - pause
-14. MOBILE - estimate your cost button (BUG, not responding)
+10. field validation - interests, property types.
+11. carousel image changes.
+12. review section stars - titles, content, images.
+13. review section show more - show less button
+14. video playback - pause
+15. MOBILE - estimate your cost button (BUG, not responding)
 
 non functional:
 1. visual comparison tests for individual components.

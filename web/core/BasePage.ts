@@ -1,6 +1,8 @@
 import { test as base, type BrowserContext } from '@playwright/test';
 import { initLogger } from '../../common/utils/Logger';
 import { LandingPage } from '../pages/landing/LandingPage';
+import { ThankYouPage } from '../pages/thank-you-page/ThankYouPage';
+import { CommonPageObjects } from '../pages/common/CommonPageObjects';
 
 const logger = initLogger('fixtures');
 
@@ -10,6 +12,8 @@ const logger = initLogger('fixtures');
  */
 type Fixtures = {
   landingPage: LandingPage;
+  thankYouPage: ThankYouPage;
+  commonPageObjects: CommonPageObjects;
 };
 
 /**
@@ -18,12 +22,28 @@ type Fixtures = {
  */
 type AutoFixtures = {
   errorCollector: void;
+  navigate: (url: string) => Promise<void>;
 };
 
 export const test = base.extend<Fixtures & AutoFixtures>({
   landingPage: async ({ page }, use) => {
     await use(new LandingPage(page));
   },
+  commonPageObjects: async ({ page }, use) => {
+    await use(new CommonPageObjects(page));
+  },
+  thankYouPage: async ({ page }, use) => {
+    await use(new ThankYouPage(page));
+  },
+  navigate: [
+    async ({ page, errorCollector }, use) => {
+      await page.goto('/');
+      await use(async (url: string) => {
+        await page.goto(url);
+      });
+    },
+    { auto: true },
+  ],
 
   errorCollector: [
     async ({ page }, use, testInfo) => {
@@ -63,4 +83,5 @@ export const test = base.extend<Fixtures & AutoFixtures>({
   ],
 });
 
+export { expect } from '@playwright/test';
 
