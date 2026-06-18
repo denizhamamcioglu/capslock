@@ -14,7 +14,7 @@ import { Environment } from './common/data/Environment';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  timeout: Constants.TIMEOUT,
+  timeout: Constants.TEST_TIMEOUT,
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,

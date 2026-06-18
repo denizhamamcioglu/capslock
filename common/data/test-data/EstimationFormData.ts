@@ -1,3 +1,5 @@
+import { ZipCode } from "../TestEnums";
+
 export type EstimationFormData = {
     zip: string;
     email: string;
@@ -8,24 +10,10 @@ export type EstimationFormData = {
 }
 
 export const validEstimation: EstimationFormData = {
-    zip: '68901',
+    zip: ZipCode.InRange,
     email: 'john.doe@example.com',
     name: 'John Doe',
     phone: '0123456789',
     interests: ['Independence', 'Safety'],
     propertyType: 'Owned House / Condo',
-}
-
-export const outOfRangeEstimation: EstimationFormData = {
-    zip: '11111',
-    email: 'john.doe@example.com',
-    name: 'John Doe',
-    phone: '2025550123',
-}
-
-export const invalidEmailEstimation: EstimationFormData = {
-    zip: '68901',
-    email: 'john.doe',
-    name: 'John Doe',
-    phone: '0123456789',
 }

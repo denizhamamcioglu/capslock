@@ -5,11 +5,11 @@ export class WebAutomationUtils {
         this.page = page;
     }
 
-    async getElementByLabel(label: string): Promise<Locator> {
-        return this.page.getByLabel(label, { exact: true });
+    getElementByValue(value: string): Locator {
+        return this.page.locator(`[value="${value}"]`);
     }
 
-    async getElementByValue(value: string): Promise<Locator> {
-        return this.page.locator(`[value="${value}"]`);
+    getElementByAttribute(attribute: string, value: string, exact: boolean = true): Locator {
+        return exact ? this.page.locator(`[${attribute.toLowerCase()}="${value.toLowerCase()}"]`) : this.page.locator(`[${attribute.toLowerCase()}*="${value.toLowerCase()}"]`);
     }
 }

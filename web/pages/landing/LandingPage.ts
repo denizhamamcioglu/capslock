@@ -22,14 +22,15 @@ export class LandingPage {
   readonly emailInput: Locator;
   readonly phoneInput: Locator;
   readonly submitYourRequestButton: Locator;
-  readonly goToEstimateButton: Locator; 
+  readonly goToEstimateButton: Locator;
+  readonly formContainers: Locator;
   readonly commonPageObjects: CommonPageObjects;
   
   constructor(page: Page) {
     this.page = page;
     this.webAutomationUtils = new WebAutomationUtils(page);
     this.commonPageObjects = new CommonPageObjects(page);
-
+    this.formContainers = page.locator('[id^="form-container-"]')
     this.zipCodeInput = page.getByPlaceholder('Enter ZIP Code', { exact: true })
     this.nextButton = page.getByRole('button').filter({ hasText: 'Next' })
     this.independenceOption = page.getByLabel('Independence', { exact: true })
@@ -41,36 +42,68 @@ export class LandingPage {
     this.mobileHomeOption = page.getByLabel('Mobile Home', { exact: true })
     this.nameInput = page.getByRole('textbox', { name: 'name' })
     this.emailInput = page.getByRole('textbox', { name: 'email' })
-    this.phoneInput = page.getByRole('textbox', { name: 'phone' })
+    this.phoneInput = page.getByPlaceholder('(XXX)XXX-XXXX', { exact: true })
     this.submitYourRequestButton = page.getByRole('button').filter({ hasText: 'Submit Your Request' })
     this.goToEstimateButton = page.getByRole('button').filter({ hasText: 'Go to Estimate' })
   }
 
-  async submitEstimation(estimation: EstimationFormData = validEstimation, useFirstForm: boolean = true) {
-    const formIndex = useFirstForm ? 0 : 1;
+  getEstimationForm(formIndex: number = 0): Locator {
+    return this.formContainers.nth(formIndex).locator('form').first();
+  }
 
-    await this.zipCodeInput.nth(formIndex).fill(estimation.zip);
-    await this.commonPageObjects.submitButton.nth(formIndex).click();
-    
-    // select interests
-    for (const interest of estimation.interests ?? []) {
-        await (await this.webAutomationUtils.getElementByLabel(interest)).nth(formIndex).click();
+  private estimationData(estimation: Partial<EstimationFormData> = {}): EstimationFormData {
+    return { ...validEstimation, ...estimation };
+  }
+
+  async submitZipCode(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
+    const data = this.estimationData(estimation);
+    const form = this.getEstimationForm(formIndex);
+
+    await form.locator(this.zipCodeInput).fill(data.zip);
+    await form.locator(this.nextButton).click();
+  }
+
+  async selectInterests(formIndex: number = 0, interests: string[] = validEstimation.interests ?? []) {
+    const form = this.getEstimationForm(formIndex);
+
+    for (const interest of interests) {
+      await form.locator(this.page.getByText(interest)).click();
     }
-    
-    await this.commonPageObjects.submitButton.nth(formIndex).click();
-    
-    // select property type
-    await (await this.webAutomationUtils.getElementByLabel(estimation.propertyType ?? '')).nth(formIndex).click();
-    await this.commonPageObjects.submitButton.nth(formIndex).click();
 
-    // fill name & email
-    await this.nameInput.nth(formIndex).fill(estimation.name);
-    await this.emailInput.nth(formIndex).fill(estimation.email);
-    
-    await this.goToEstimateButton.nth(formIndex).click();
-    
-    // enter phone number
-    await this.phoneInput.nth(formIndex).fill(estimation.phone);
-    await this.submitYourRequestButton.nth(formIndex).click();
+    await form.locator(this.nextButton).click();
+  }
+
+  async selectPropertyType(formIndex: number = 0, propertyType: string = validEstimation.propertyType ?? '') {
+    const form = this.getEstimationForm(formIndex);
+
+    await form.locator(this.page.getByText(propertyType)).click();
+    await form.locator(this.nextButton).click();
+  }
+
+  async fillContactDetails(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
+    const data = this.estimationData(estimation);
+    const form = this.getEstimationForm(formIndex);
+
+    await form.locator(this.nameInput).fill(data.name);
+    await form.locator(this.emailInput).fill(data.email);
+    await form.locator(this.goToEstimateButton).click();
+  }
+
+  async submitPhoneNumber(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
+    const data = this.estimationData(estimation);
+    const form = this.getEstimationForm(formIndex);
+
+    await form.locator(this.phoneInput).fill(data.phone);
+    await form.locator(this.submitYourRequestButton).click();
+  }
+
+  async submitEstimation(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
+    const data = this.estimationData(estimation);
+
+    await this.submitZipCode(formIndex, data);
+    await this.selectInterests(formIndex, data.interests);
+    await this.selectPropertyType(formIndex, data.propertyType);
+    await this.fillContactDetails(formIndex, data);
+    await this.submitPhoneNumber(formIndex, data);
   }
 }
