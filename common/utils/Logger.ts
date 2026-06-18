@@ -36,7 +36,7 @@ export function initLogger(contextName?: string) {
 
   const { file: callerFile } = getCallerInfo();
   const baseFileName = contextName || callerFile;
-  const logPath = path.join(logsDir, `${baseFileName}.log`);
+  const _logPath = path.join(logsDir, `${baseFileName}.log`);
 
   const injectLineInfo = winston.format((info) => {
     const { file, line } = getCallerInfo();
@@ -68,7 +68,7 @@ export function initLogger(contextName?: string) {
     format: fileFormat,
     transports: [
       new winston.transports.Console({ format: consoleFormat }),
-      // new winston.transports.File({ filename: logPath }), // uncomment if you want logs files.
+      // new winston.transports.File({ filename: _logPath }), // uncomment if you want logs files.
     ],
   });
 }

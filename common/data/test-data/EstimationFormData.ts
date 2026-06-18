@@ -13,7 +13,7 @@ export const validEstimation: EstimationFormData = {
     zip: ZipCode.InRange,
     email: 'john.doe@example.com',
     name: 'John Doe',
-    phone: '0123456789',
+    phone: '2025550123',
     interests: ['Independence', 'Safety'],
     propertyType: 'Owned House / Condo',
 }

@@ -1,109 +1,125 @@
-import { Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { initLogger } from "../../../common/utils/Logger";
-import { EstimationFormData, validEstimation } from "../../../common/data/test-data/EstimationFormData";
+import { Constants } from "../../../common/data/Constants";
 import { WebAutomationUtils } from "../../utils/WebAutomationUtils";
 import { CommonPageObjects } from "../common/CommonPageObjects";
+import { Accordion } from "./components/Accordion";
+import { EstimationForm } from "./components/EstimationForm";
+import { Review } from "./components/Review";
+import { VideoCard } from "./components/VideoCard";
 
 const logger = initLogger('LandingPage');
 
 export class LandingPage {
   readonly page: Page;
   readonly webAutomationUtils: WebAutomationUtils;
-  readonly zipCodeInput: Locator;
-  readonly nextButton: Locator;
-  readonly independenceOption: Locator;
-  readonly safetyOption: Locator;
-  readonly therapyOption: Locator;
-  readonly otherOption: Locator;
-  readonly ownedHouseOption: Locator;
-  readonly rentalOption: Locator;
-  readonly mobileHomeOption: Locator;
-  readonly nameInput: Locator;
-  readonly emailInput: Locator;
-  readonly phoneInput: Locator;
-  readonly submitYourRequestButton: Locator;
-  readonly goToEstimateButton: Locator;
-  readonly formContainers: Locator;
   readonly commonPageObjects: CommonPageObjects;
-  
+  readonly formContainers: Locator;
+  readonly videoCardContainers: Locator;
+  readonly accordionContainers: Locator;
+  readonly reviewContainers: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.webAutomationUtils = new WebAutomationUtils(page);
     this.commonPageObjects = new CommonPageObjects(page);
-    this.formContainers = page.locator('[id^="form-container-"]')
-    this.zipCodeInput = page.getByPlaceholder('Enter ZIP Code', { exact: true })
-    this.nextButton = page.getByRole('button').filter({ hasText: 'Next' })
-    this.independenceOption = page.getByLabel('Independence', { exact: true })
-    this.safetyOption = page.getByLabel('Safety', { exact: true })
-    this.therapyOption = page.getByLabel('Therapy', { exact: true })
-    this.otherOption = page.getByLabel('Other', { exact: true })
-    this.ownedHouseOption = page.getByLabel('Owned House / Condo', { exact: true })
-    this.rentalOption = page.getByLabel('Rental', { exact: true })
-    this.mobileHomeOption = page.getByLabel('Mobile Home', { exact: true })
-    this.nameInput = page.getByRole('textbox', { name: 'name' })
-    this.emailInput = page.getByRole('textbox', { name: 'email' })
-    this.phoneInput = page.getByPlaceholder('(XXX)XXX-XXXX', { exact: true })
-    this.submitYourRequestButton = page.getByRole('button').filter({ hasText: 'Submit Your Request' })
-    this.goToEstimateButton = page.getByRole('button').filter({ hasText: 'Go to Estimate' })
+    this.formContainers = page.locator('[id^="form-container-"]');
+    this.videoCardContainers = page.locator('[class="blockVideo"]');
+    this.accordionContainers = page.locator('[class*="sliderTheme"]');
+    this.reviewContainers = page.locator('[class*="reviewWrap"]');
   }
 
-  getEstimationForm(formIndex: number = 0): Locator {
-    return this.formContainers.nth(formIndex).locator('form').first();
+  /**
+   * Returns the estimation form component scoped to the form at the given index.
+   */
+  estimationForm(formIndex: number = 0): EstimationForm {
+    return new EstimationForm(this.formContainers.nth(formIndex));
   }
 
-  private estimationData(estimation: Partial<EstimationFormData> = {}): EstimationFormData {
-    return { ...validEstimation, ...estimation };
+  /**
+   * Returns the video card component scoped to the card at the given index.
+   */
+  videoCard(cardIndex: number = 0): VideoCard {
+    return new VideoCard(this.videoCardContainers.nth(cardIndex));
   }
 
-  async submitZipCode(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
-    const data = this.estimationData(estimation);
-    const form = this.getEstimationForm(formIndex);
-
-    await form.locator(this.zipCodeInput).fill(data.zip);
-    await form.locator(this.nextButton).click();
+  /**
+   * Returns the accordion component scoped to the accordion at the given index.
+   */
+  accordion(accordionIndex: number = 0): Accordion {
+    return new Accordion(this.accordionContainers.nth(accordionIndex));
   }
 
-  async selectInterests(formIndex: number = 0, interests: string[] = validEstimation.interests ?? []) {
-    const form = this.getEstimationForm(formIndex);
+  /**
+   * Returns the review component scoped to the review at the given index.
+   */
+  review(reviewIndex: number = 0): Review {
+    return new Review(this.reviewContainers.nth(reviewIndex));
+  }
 
-    for (const interest of interests) {
-      await form.locator(this.page.getByText(interest)).click();
+  /**
+   * Locates the progress step container whose class list contains the exact
+   * `step-{stepNumber}` token (so `step-1` won't match `step-10`).
+   */
+  stepDiv(stepNumber: number): Locator {
+    return this.page.locator(`[class~="steps"][class~="step-${stepNumber}"]`);
+  }
+
+  /**
+   * Asserts the progress bar value indicator is visible on every form on the page.
+   */
+  async verifyProgressBarValuesVisibleOnAllForms() {
+    const formCount = await this.formContainers.count();
+    logger.info(`Verifying progress bar values are visible on all ${formCount} form(s).`);
+
+    for (let formIndex = 0; formIndex < formCount; formIndex++) {
+      await this.estimationForm(formIndex).verifyProgressBarValuesVisible();
     }
-
-    await form.locator(this.nextButton).click();
   }
 
-  async selectPropertyType(formIndex: number = 0, propertyType: string = validEstimation.propertyType ?? '') {
-    const form = this.getEstimationForm(formIndex);
+  /**
+   * Asserts every video card on the page has a non-empty `src` attribute.
+   */
+  async verifyVideoCardsHaveSourcesOnAllCards() {
+    const videoCardCount = await this.videoCardContainers.count();
+    logger.info(`Verifying all ${videoCardCount} video card(s) have a non-empty src attribute.`);
 
-    await form.locator(this.page.getByText(propertyType)).click();
-    await form.locator(this.nextButton).click();
+    for (let videoIndex = 0; videoIndex < videoCardCount; videoIndex++) {
+      await expect(this.videoCard(videoIndex).videoMainElement.first(), `Video card ${videoIndex} has an empty src attribute.`).toHaveAttribute('src', /.+/);
+    }
   }
 
-  async fillContactDetails(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
-    const data = this.estimationData(estimation);
-    const form = this.getEstimationForm(formIndex);
-
-    await form.locator(this.nameInput).fill(data.name);
-    await form.locator(this.emailInput).fill(data.email);
-    await form.locator(this.goToEstimateButton).click();
+  /**
+   * Asserts the progress bar value visibility and the expected step on every form.
+   */
+  async verifyProgressStatesOnAllForms(expectedStep: string) {
+    logger.info(`Verifying progress states (values + step "${expectedStep}") on all forms.`);
+    await this.verifyProgressBarValuesVisibleOnAllForms();
+    await this.verifyProgressBarStepsOnAllForms(expectedStep);
   }
 
-  async submitPhoneNumber(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
-    const data = this.estimationData(estimation);
-    const form = this.getEstimationForm(formIndex);
+  /**
+   * Asserts the progress bar shows the expected current step on every form on the page.
+   */
+  async verifyProgressBarStepsOnAllForms(expectedStep: string) {
+    const formCount = await this.formContainers.count();
+    logger.info(`Verifying progress bar step "${expectedStep}" on all ${formCount} form(s).`);
 
-    await form.locator(this.phoneInput).fill(data.phone);
-    await form.locator(this.submitYourRequestButton).click();
+    for (let formIndex = 0; formIndex < formCount; formIndex++) {
+      await this.estimationForm(formIndex).verifyProgressBarStep(expectedStep);
+    }
   }
 
-  async submitEstimation(formIndex: number = 0, estimation: Partial<EstimationFormData> = {}) {
-    const data = this.estimationData(estimation);
+  /**
+   * Asserts the given message text is visible within every form on the page.
+   */
+  async verifyMessageVisibleOnAllForms(message: string) {
+    const formCount = await this.formContainers.count();
+    logger.info(`Verifying the message "${message}" is visible on all ${formCount} form(s).`);
 
-    await this.submitZipCode(formIndex, data);
-    await this.selectInterests(formIndex, data.interests);
-    await this.selectPropertyType(formIndex, data.propertyType);
-    await this.fillContactDetails(formIndex, data);
-    await this.submitPhoneNumber(formIndex, data);
+    for (let formIndex = 0; formIndex < formCount; formIndex++) {
+      const messageLocator = this.estimationForm(formIndex).root.getByText(message);
+      await expect(messageLocator, `The message "${message}" is not visible for form ${formIndex}`).toBeVisible({ timeout: Constants.MEDIUM_WAIT });
+    }
   }
 }

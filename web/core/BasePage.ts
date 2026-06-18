@@ -1,10 +1,8 @@
-import { test as base, type BrowserContext } from '@playwright/test';
-import { initLogger } from '../../common/utils/Logger';
+import { test as base } from '@playwright/test';
 import { LandingPage } from '../pages/landing/LandingPage';
 import { ThankYouPage } from '../pages/thank-you-page/ThankYouPage';
 import { CommonPageObjects } from '../pages/common/CommonPageObjects';
-
-const logger = initLogger('fixtures');
+import { WebAutomationUtils } from '../utils/WebAutomationUtils';
 
 /**
  * Page-object fixtures. These are instantiated lazily, only when a test
@@ -14,6 +12,7 @@ type Fixtures = {
   landingPage: LandingPage;
   thankYouPage: ThankYouPage;
   commonPageObjects: CommonPageObjects;
+  webAutomationUtils: WebAutomationUtils;
 };
 
 /**
@@ -35,7 +34,14 @@ export const test = base.extend<Fixtures & AutoFixtures>({
   thankYouPage: async ({ page }, use) => {
     await use(new ThankYouPage(page));
   },
+
+  webAutomationUtils: async ({ page }, use) => {
+    await use(new WebAutomationUtils(page));
+  },
   navigate: [
+    // errorCollector is requested only to force it to run for every test; it is
+    // intentionally not referenced in the body.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async ({ page, errorCollector }, use) => {
       await page.goto('/');
       await use(async (url: string) => {
@@ -83,5 +89,5 @@ export const test = base.extend<Fixtures & AutoFixtures>({
   ],
 });
 
-export { expect } from '@playwright/test';
+export { expect } from './matchers';
 
