@@ -90,6 +90,21 @@ export default defineConfig({
       use: { ...devices['Pixel 10'],},
       testDir: './tests/web/non-functional/visual'
     },
+
+    {
+      name: 'desktop_chrome_accessibility_tests',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 }
+      },
+      testDir: './tests/web/non-functional/accessibility'
+    },
+
+    {
+      name: 'mobile_chrome_accessibility_tests',
+      use: { ...devices['Pixel 10'],},
+      testDir: './tests/web/non-functional/accessibility'
+    },
     // {
     //   name: 'Mobile Safari',
     //   use: { ...devices['iPhone 12'] },

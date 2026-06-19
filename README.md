@@ -46,7 +46,26 @@ npx playwright test --project=desktop_chrome_functional_tests
 npx playwright test --project=desktop_firefox_functional_tests
 npx playwright test --project=desktop_webkit_functional_tests
 npx playwright test --project=mobile_chrome_functional_tests
+npx playwright test --project=desktop_chrome_visual_tests
+npx playwright test --project=mobile_chrome_visual_tests
+npx playwright test --project=desktop_chrome_accessibility_tests
+npx playwright test --project=mobile_chrome_accessibility_tests
 ```
+
+### Visual snapshots
+
+Visual tests compare the page against committed golden screenshots
+(`<form factor>-<page>.png`, e.g. `desktop-landing.png` / `mobile-landing.png`).
+The first run, or any run after an intended UI change, must (re)generate them:
+
+```bash
+npx playwright test --project=desktop_chrome_visual_tests --update-snapshots
+npx playwright test --project=mobile_chrome_visual_tests --update-snapshots
+```
+
+Goldens are OS-specific (the platform is part of the stored file name), so
+generate them on the same OS that runs the comparison (e.g. the Linux CI image)
+and commit the results.
 
 ### Targeting a different environment
 
@@ -89,10 +108,13 @@ See [`TestCases.md`](./TestCases.md) for the full, ID'd test matrix. In summary:
 - Video cards: autoplay, play/pause, non-empty sources
 - Reviews: element visibility and show more / less toggle
 
+**Automated (non-functional, `tests/web/non-functional/`):**
+
+- Visual regression (`visual/`) — full-page screenshot comparison of the landing page on desktop and mobile. Videos are paused and rewound, animations are disabled, and the page is scrolled to load lazy content so the goldens are deterministic.
+- Accessibility (`accessibility/`) — axe-core (`@axe-core/playwright`) WCAG 2.0 / 2.1 / 2.2 A & AA scans of the landing page on desktop and mobile.
+
 **Not yet automated / planned:**
 
-- Visual regression — `playwright.config.ts` defines `*_visual_tests` projects, but `tests/web/non-functional/visual` has no specs yet, so those projects currently run zero tests.
-- Accessibility checks.
 - Mobile "Estimate your cost" interaction (currently a failing manual case).
 
 **Known product bugs surfaced by the suite** (tracked in `TestCases.md`):
