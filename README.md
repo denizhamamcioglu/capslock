@@ -149,4 +149,4 @@ See [`TestCases.md`](./TestCases.md) for the full, ID'd test matrix. In summary:
 1. add localization if the web app will support any other language then English.
 2. contact with the development team to add data-testid attributes or aria-labels for elements with broad CSS selectors.
 3. component based visual comparison tests (example: individual stars on review page, accordion next-previous buttons, etc.)
-4. Adding more mobile resolutions.
+4. Adding more device/os combinations according to the target user base.
