@@ -1,8 +1,8 @@
-import { test as base, type BrowserContext } from '@playwright/test';
-import { initLogger } from '../../common/utils/Logger';
+import { test as base } from '@playwright/test';
 import { LandingPage } from '../pages/landing/LandingPage';
-
-const logger = initLogger('fixtures');
+import { ThankYouPage } from '../pages/thank-you-page/ThankYouPage';
+import { CommonPageObjects } from '../pages/common/CommonPageObjects';
+import { WebAutomationUtils } from '../utils/WebAutomationUtils';
 
 /**
  * Page-object fixtures. These are instantiated lazily, only when a test
@@ -10,6 +10,9 @@ const logger = initLogger('fixtures');
  */
 type Fixtures = {
   landingPage: LandingPage;
+  thankYouPage: ThankYouPage;
+  commonPageObjects: CommonPageObjects;
+  webAutomationUtils: WebAutomationUtils;
 };
 
 /**
@@ -18,12 +21,35 @@ type Fixtures = {
  */
 type AutoFixtures = {
   errorCollector: void;
+  navigate: (url: string) => Promise<void>;
 };
 
 export const test = base.extend<Fixtures & AutoFixtures>({
   landingPage: async ({ page }, use) => {
     await use(new LandingPage(page));
   },
+  commonPageObjects: async ({ page }, use) => {
+    await use(new CommonPageObjects(page));
+  },
+  thankYouPage: async ({ page }, use) => {
+    await use(new ThankYouPage(page));
+  },
+
+  webAutomationUtils: async ({ page }, use) => {
+    await use(new WebAutomationUtils(page));
+  },
+  navigate: [
+    // errorCollector is requested only to force it to run for every test; it is
+    // intentionally not referenced in the body.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async ({ page, errorCollector }, use) => {
+      await page.goto('/');
+      await use(async (url: string) => {
+        await page.goto(url);
+      });
+    },
+    { auto: true },
+  ],
 
   errorCollector: [
     async ({ page }, use, testInfo) => {
@@ -63,4 +89,5 @@ export const test = base.extend<Fixtures & AutoFixtures>({
   ],
 });
 
+export { expect } from './matchers';
 

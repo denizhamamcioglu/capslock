@@ -3,7 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "tsc": "tsc --noEmit",
+    "test": "npx playwright test",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/denizhamamcioglu/capslock.git"
@@ -16,8 +27,17 @@
   },
   "homepage": "https://github.com/denizhamamcioglu/capslock#readme",
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.3",
+    "eslint": "^10.5.0",
+    "eslint-plugin-playwright": "^2.10.4",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1",
     "winston": "3.19.0"
   }
 }
