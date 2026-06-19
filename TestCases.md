@@ -3,6 +3,7 @@
 Application under test: `https://test-qa.capslock.global` (landing page)
 
 Legend:
+
 - **Status**: `Automated` / `Manual` / `Planned`
 - **Result**: `Pass` / `Fail (bug)` / `Not run`
 - ZIP codes: In range = `68901`, Out of range = `11111`
@@ -12,6 +13,7 @@ Legend:
 ## 1. Functional
 
 ### 1.1 Estimation Form — Happy Path Submissions
+
 Spec: `tests/web/functional/testValidFormSubmissions.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -21,6 +23,7 @@ Spec: `tests/web/functional/testValidFormSubmissions.spec.ts`
 | TC-F-003 | Submit an estimation with an out-of-range ZIP code | Landing page loaded | 1. Submit out-of-range ZIP (`11111`)<br>2. Enter a valid email and submit | After ZIP: out-of-area message shown on all forms.<br>After email: out-of-area "thank you" message shown on all forms | Automated | Pass |
 
 ### 1.2 Estimation Form — Step Progress Bar
+
 Spec: `tests/web/functional/testValidFormSubmissions.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -29,6 +32,7 @@ Spec: `tests/web/functional/testValidFormSubmissions.spec.ts`
 | TC-F-005 | Step progress states for an in-range ZIP | Landing page loaded | 1. Submit in-range ZIP → expect step `2`<br>2. Select interests → expect step `3`<br>3. Select property type → expect step `4`<br>4. Fill contact details → expect step `5` | Progress bar value visible and current step correct on all forms at each stage | Automated | **Fail (bug)** — progress bar state invalid |
 
 ### 1.3 Estimation Form — Field Validation
+
 Spec: `tests/web/functional/testMandatoryFields.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -44,6 +48,7 @@ Spec: `tests/web/functional/testMandatoryFields.spec.ts`
 | TC-F-014 | Phone number is required | Valid name and email entered | 1. Submit the request with an empty phone | Error: "Enter your phone number." | Automated | Pass |
 
 ### 1.4 Accordion / Carousel
+
 Spec: `tests/web/functional/testAccordionCards.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -52,6 +57,7 @@ Spec: `tests/web/functional/testAccordionCards.spec.ts`
 | TC-F-016 | Accordion image changes on navigation | Landing page loaded | 1. Record current image src<br>2. Click Next<br>3. Click Previous | After Next: image src changes.<br>After Previous: image src returns to the original | Automated | Pass |
 
 ### 1.5 Video Cards
+
 Spec: `tests/web/functional/testVideoCards.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -60,6 +66,7 @@ Spec: `tests/web/functional/testVideoCards.spec.ts`
 | TC-F-018 | All video cards have a valid source | Landing page loaded | 1. Iterate all video cards | Every video element has a non-empty `src` attribute | Automated | Pass |
 
 ### 1.6 Reviews Section
+
 Spec: `tests/web/functional/testReviews.spec.ts`
 
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
@@ -68,6 +75,7 @@ Spec: `tests/web/functional/testReviews.spec.ts`
 | TC-F-020 | More / Less button toggles content | Landing page loaded | 1. Record button text<br>2. Click the More/Less button | Button text changes (e.g. "Show more" ↔ "Show less") | Automated | Pass |
 
 ### 1.7 Mobile
+
 | ID | Title | Preconditions | Steps | Expected Result | Status | Result |
 |----|-------|---------------|-------|-----------------|--------|--------|
 | TC-F-021 | "Estimate your cost" button responds on mobile | Mobile viewport, landing page loaded | 1. Tap the "Estimate your cost" button | Estimation flow is triggered | Manual | **Fail (bug)** — button not responding on mobile |
@@ -84,6 +92,7 @@ Spec: `tests/web/functional/testReviews.spec.ts`
 ---
 
 ## Open Bugs Summary
+
 | Ref | Area | Description |
 |-----|------|-------------|
 | TC-F-004 | Progress bar | Out-of-range flow: progress bar not complete; total step count `x` missing in "1 of x". |

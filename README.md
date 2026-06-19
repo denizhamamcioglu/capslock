@@ -1,3 +1,21 @@
+# Notes
+
+## The areas below are entirely my own work — no AI was used
+
+1. Framework architecture.
+2. locators.
+3. tests (flow, logic, assertions, steps, etc.)
+4. ideas (accessibility, visual, etc).
+
+## The areas below were created with AI assistance
+
+1. Adding documentation, tidying up readme and test case md files.
+2. After creating the initial structure, some copy operations (example: create component y based on component x (which I created)).
+3. setting up eslint.
+4. based on my implementation, validating and improving the github pipelines.
+5. overall scan of the project for missing things.
+6. setting up husky.
+
 # Capslock — Playwright Test Suite
 
 End-to-end UI tests for the Capslock landing page, built with [Playwright](https://playwright.dev/) and TypeScript using a component-based Page Object Model.
@@ -119,14 +137,15 @@ See [`TestCases.md`](./TestCases.md) for the full, ID'd test matrix. In summary:
 
 **Known product bugs surfaced by the suite** (tracked in `TestCases.md`):
 
-- Progress bar never completes — the total step count is missing in "1 of x" (both in-range and out-of-range flows).
-- Mobile "Estimate your cost" button does not respond.
+1. Progress bar never completes — the total step count is missing in "1 of x" for out-of-range flows and step 3 is missing for in range zip codes..
+
+2. Mobile "Estimate your cost" button does not respond.
+
+3. multiple accessibility violations.
 
 ## Improvement areas
+
 1. add localization if the web app will support any other language then English.
 2. contact with the development team to add data-testid attributes or aria-labels for elements with broad CSS selectors.
-3. contact with the 
-
-### Internationalization
-
-- Message strings live in enums (`ErrorMessage`, `FeedbackMessage`) as single-language values. Supporting multiple languages requires a key → per-locale translation structure plus locale-aware projects/fixtures.
+3. component based visual comparison tests (example: individual stars on review page, accordion next-previous buttons, etc.)
+4. Adding more mobile resolutions.

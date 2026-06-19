@@ -89,5 +89,5 @@ export const test = base.extend<Fixtures & AutoFixtures>({
   ],
 });
 
-export { expect } from './matchers';
+export { expect } from './Matchers';
 
