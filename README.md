@@ -15,6 +15,7 @@
 4. based on my implementation, validating and improving the github pipelines.
 5. overall scan of the project for missing things.
 6. setting up husky.
+7. based on my work and conventions, adding logging lines across the framework.
 
 # Capslock — Playwright Test Suite
 
